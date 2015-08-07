@@ -1,0 +1,196 @@
+{"frames": {
+
+"bullet_big.png":
+{
+	"frame": {"x":424,"y":2,"w":45,"h":6},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":6},
+	"sourceSize": {"w":45,"h":6}
+},
+"bullet_small.png":
+{
+	"frame": {"x":471,"y":2,"w":30,"h":5},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":5},
+	"sourceSize": {"w":30,"h":5}
+},
+"ship_1.png":
+{
+	"frame": {"x":274,"y":2,"w":73,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":73,"h":56},
+	"sourceSize": {"w":73,"h":56}
+},
+"ship_2.png":
+{
+	"frame": {"x":94,"y":2,"w":88,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":56},
+	"sourceSize": {"w":88,"h":56}
+},
+"ship_3.png":
+{
+	"frame": {"x":2,"y":2,"w":90,"h":55},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":55},
+	"sourceSize": {"w":90,"h":55}
+},
+"ship_4.png":
+{
+	"frame": {"x":184,"y":2,"w":88,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":56},
+	"sourceSize": {"w":88,"h":56}
+},
+"ship_5.png":
+{
+	"frame": {"x":349,"y":2,"w":73,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":73,"h":56},
+	"sourceSize": {"w":73,"h":56}
+},
+"smoke_1.png":
+{
+	"frame": {"x":478,"y":48,"w":14,"h":10},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":10},
+	"sourceSize": {"w":14,"h":10}
+},
+"smoke_10.png":
+{
+	"frame": {"x":478,"y":9,"w":16,"h":18},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
+	"sourceSize": {"w":16,"h":18}
+},
+"smoke_11.png":
+{
+	"frame": {"x":460,"y":32,"w":16,"h":19},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":19},
+	"sourceSize": {"w":16,"h":19}
+},
+"smoke_12.png":
+{
+	"frame": {"x":442,"y":33,"w":16,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":20},
+	"sourceSize": {"w":16,"h":20}
+},
+"smoke_13.png":
+{
+	"frame": {"x":424,"y":10,"w":16,"h":21},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":21},
+	"sourceSize": {"w":16,"h":21}
+},
+"smoke_14.png":
+{
+	"frame": {"x":424,"y":33,"w":16,"h":21},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":21},
+	"sourceSize": {"w":16,"h":21}
+},
+"smoke_15.png":
+{
+	"frame": {"x":442,"y":10,"w":16,"h":21},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":21},
+	"sourceSize": {"w":16,"h":21}
+},
+"smoke_16.png":
+{
+	"frame": {"x":460,"y":10,"w":16,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":20},
+	"sourceSize": {"w":16,"h":20}
+},
+"smoke_2.png":
+{
+	"frame": {"x":514,"y":2,"w":14,"h":11},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":11},
+	"sourceSize": {"w":14,"h":11}
+},
+"smoke_3.png":
+{
+	"frame": {"x":496,"y":46,"w":15,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":12},
+	"sourceSize": {"w":15,"h":12}
+},
+"smoke_4.png":
+{
+	"frame": {"x":513,"y":46,"w":15,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":12},
+	"sourceSize": {"w":15,"h":12}
+},
+"smoke_5.png":
+{
+	"frame": {"x":530,"y":19,"w":15,"h":14},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":14},
+	"sourceSize": {"w":15,"h":14}
+},
+"smoke_6.png":
+{
+	"frame": {"x":530,"y":2,"w":15,"h":15},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":15},
+	"sourceSize": {"w":15,"h":15}
+},
+"smoke_7.png":
+{
+	"frame": {"x":496,"y":28,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"smoke_8.png":
+{
+	"frame": {"x":478,"y":29,"w":16,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":17},
+	"sourceSize": {"w":16,"h":17}
+},
+"smoke_9.png":
+{
+	"frame": {"x":496,"y":9,"w":16,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":17},
+	"sourceSize": {"w":16,"h":17}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "ship.png",
+	"format": "RGBA8888",
+	"size": {"w":547,"h":60},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:34015d0e33ec51c5c47ab6c5d7c68b9d:819e5f52e6fe1a494812baeb8f33df79:25d6acd8d4906c9ff490804d476da0a8$"
+}
+}
