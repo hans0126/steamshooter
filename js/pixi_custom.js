@@ -69,10 +69,10 @@ define(function() {
                 var _child = this.children;
                 for (var i = 0; i < _child.length; i++) {
                     if (_child[i].visible == true) {
-                        if (_child[i].y < 0 || _child[i].x < 0 || _child[i].y > renderer.height || _child[i].x > renderer.width) {
-                            _child[i].vx = 0;
-                            _child[i].vy = 0;
-                            _child[i].visible = false;
+                        var _b = _child[i];
+
+                        if (_b.y < 0 || _b.x < 0 || _b.y > renderer.height || _b.x > renderer.width) {
+                            _child[i].remove();
                         }
                     }
                 }
@@ -80,6 +80,22 @@ define(function() {
 
             PIXI.ticker.shared.add(_t.bind(this));
 
+        }
+
+
+        PIXI.DisplayObject.prototype.movement = function() {
+
+            function _t() {
+                var _child = this.children;
+                for (var i = 0; i < _child.length; i++) {
+                    if (_child[i].visible == true) {
+                        _child[i].x += _child[i].vx;
+                        _child[i].y += _child[i].vy;
+                    }
+                }
+            }
+
+            PIXI.ticker.shared.add(_t.bind(this));
         }
 
         //set child property
@@ -98,6 +114,44 @@ define(function() {
             if (_rotation) {
                 this.rotation = _t;
             }
+        }
+
+        PIXI.Container.prototype.beHit = function() {
+
+            var colorMatrix = [
+                1, 0, 0, 0.5,
+                0, 2, 0, 0.5,
+                0, 0, 2, 0.5,
+                0, 0, 0, 2
+            ];
+
+            var filter = new PIXI.filters.ColorMatrixFilter();
+            filter.matrix = colorMatrix;
+            this.filters = [filter];
+
+            setTimeout(function() {
+                this.filters = null;
+            }.bind(this), 100);
+
+        }
+
+        PIXI.Container.prototype.actorInit = function() {
+            this.vx = 0;
+            this.vy = 0;
+            this.overlapTime = 0;
+            this.visible = false;
+            this.setAnchor(0.5);
+
+
+        }
+
+        PIXI.Container.prototype.remove = function() {
+            this.vx = 0;
+            this.vy = 0;
+            this.x = 0;
+            this.y = 0;
+            this.visible = false;
+
         }
 
 

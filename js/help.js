@@ -57,24 +57,33 @@ function keyboard(keyCode) {
  */
 
 function degree2Radian(_degrees) {
-    return  _degrees * (Math.PI / 180);
+    return _degrees * (Math.PI / 180);
 }
 
 
 /**
-*/
+ */
 
 function hitTest(r1, r2) {
-    r1 = r1.getBounds();
-    r2 = r2.getBounds();
+    /*
+    console.log("x:%s,y:%s,width:%s,height:%s",r1.x,r1.y,r1.width,r1.height);
+    r1 = r1.getBounds();  
+    console.log("x:%s,y:%s,width:%s,height:%s",r1.x,r1.y,r1.width,r1.height);
+console.log("---");
+    console.log("x:%s,y:%s,width:%s,height:%s",r2.x,r2.y,r2.width,r2.height);
+      r2 = r2.getBounds();
+       console.log("x:%s,y:%s,width:%s,height:%s",r2.x,r2.y,r2.width,r2.height);
+    console.log("***");*/
 
 
-    if (r1.x + r1.width > r2.x &&
-        r1.y + r1.height > r2.y &&
-        r1.x < r2.x + r2.width &&
-        r1.y < r2.y + r2.height) {
+
+    if (r1.x - (r1.width / 2) + r1.width > r2.x - (r2.width / 2) &&
+        r1.y - (r1.height / 2) + r1.height > r2.y - (r2.height / 2) &&
+        r1.x - (r1.width / 2) < r2.x - (r2.width / 2) + r2.width &&
+        r1.y - (r1.height / 2) < r2.y - (r2.height / 2) + r2.height) {
         return true;
     } else {
         return false;
     }
+
 }

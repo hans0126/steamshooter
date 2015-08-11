@@ -22,51 +22,105 @@ define(function() {
 
         playerLayer = new PIXI.Container();
         bulletLayer = new PIXI.Container();
+        enemyLayer = new PIXI.Container();
+        firesparkLayer = new PIXI.Container();
+        enemyexplodeLayer = new PIXI.Container();
+
         bulletLayer.checkOutArea();
+        bulletLayer.movement();
+        enemyLayer.checkOutArea();
+        enemyLayer.movement();
+        playerLayer.movement();
+
         stage.addChild(playerLayer);
         stage.addChild(bulletLayer);
+        stage.addChild(enemyLayer);
+        stage.addChild(firesparkLayer);
+        stage.addChild(enemyexplodeLayer);
 
-        var smoke = new PIXI.extras.MovieClip(spriteAnimeManager['smoke']);
-        smoke.animationSpeed = 0.1;
-        stage.addChild(smoke);
-        smoke.play();
-        smoke.x = 200;
-        smoke.y = 200;
 
-        for (var i = 0; i < 10; i++) {
-
+        //bullet
+        for (var i = 0; i < 50; i++) {
             var bullet = new PIXI.Sprite.fromFrame('bullet_big.png');
-            bullet.rotation = degree2Radian(-90);
-            bullet.x = Math.floor(Math.random() * renderer.height);
-            bullet.y = Math.floor(Math.random() * renderer.width);
-            bullet.vx = 0;
-            bullet.vy = 0;
-            bullet.overlapTime = 0;
-            // bullet.visible = false;
-            //  console.log(bullet.x+"/"+bullet.y);
+            bullet.pow = 2;
+            bullet.id = i;
+            bullet.actorInit();
             bulletLayer.addChild(bullet);
+
+        }
+        //firespark
+        for (var i = 0; i < 20; i++) {
+            var firespark = new PIXI.extras.MovieClip(spriteAnimeManager['firespark']);
+            firespark.actorInit();
+            firespark.animationSpeed = 0.3;
+            firespark.loop = false;
+            firespark.onComplete = function() {
+                this.visible = false;
+                this.gotoAndStop(0);
+            }
+
+            firesparkLayer.addChild(firespark);
+        }
+        // enemy explode
+        for (var i = 0; i < 20; i++) {
+            var explode = new PIXI.extras.MovieClip(spriteAnimeManager['explode']);
+            explode.actorInit();
+            explode.animationSpeed = 0.3;
+            explode.loop = false;
+            explode.onComplete = function() {
+                this.visible = false;
+                this.gotoAndStop(0);
+            }
+
+            enemyexplodeLayer.addChild(explode);
+        }
+
+        // enemy
+        for (var i = 0; i < 50; i++) {
+            var enemy = new PIXI.extras.MovieClip(spriteAnimeManager['enemy']);
+            enemy.actorInit();
+            enemy.animationSpeed = 0.2;
+            enemy.life = 3;
+            enemy.id = i;
+            enemyLayer.addChild(enemy);
+        }
+
+        // deploy enemy
+
+        /*  for (var i = 0; i < 3; i++) {
+              for (var j = 0; j < 10; j++) {
+                  var _e = enemyLayer.getUnusedSprite();
+                  _e.x = _e.width * j + 10 * j;
+                  _e.y = _e.height * i + 10 * i;
+                  _e.play();
+
+              }
+          }*/
+
+        for (var i = 0; i < 5; i++) {
+            setTimeout(function() {
+                var _e = enemyLayer.getUnusedSprite();
+                _e.x = 40;
+                _e.y = 0;
+                _e.vy = 1;
+                 _e.vx = 1;
+                _e.play();
+            }, 500*i);
         }
 
 
 
-        var ship = new PIXI.extras.MovieClip(spriteAnimeManager['shipCenterToLeft']);
 
+        var ship = new PIXI.extras.MovieClip(spriteAnimeManager['ship']);
         ship.loop = false;
-
-        ship.setAnchor(0.5);
         ship.fire = false;
-        ship.vx = 0;
-        ship.vy = 0;
-        ship.overlapTime = 0;
-
+        ship.actorInit();
         ship.state;
         ship.x = renderer.width / 2;
         ship.y = renderer.height / 2;
         ship.firingTimer = 0;
-
-
         ship.animationSpeed = 0.2;
-        //ship.gotoAndPlay(2);
+        ship.visible = true;
 
         var left = keyboard(37),
             up = keyboard(38),
@@ -121,9 +175,6 @@ define(function() {
             ship.fire = false;
         }
 
-
-
-
         playerLayer.addChild(ship);
 
         stage.interactive = true;
@@ -140,64 +191,75 @@ define(function() {
 
             if (Date.now() > ship.firingTimer) {
 
-                var b = bulletLayer.getUnusedSprite();
-                if (typeof(b) != "undefined") {
+                var _b = bulletLayer.getUnusedSprite();
 
-                    b.x = this.x + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)];
-                    b.y = this.y + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)];
+                if (typeof(_b) != "undefined") {
 
+                    _b.x = this.x + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)];
+                    _b.y = this.y + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)] - 40;
 
-                    b.velocity(ship.x, 0, 7, true);
+                    _b.velocity(ship.x, 0, 7, false);
 
                     ship.firingTimer = Date.now() + 120;
                 }
             }
         }
 
-        function playing() {
-            ship.x += ship.vx;
-            ship.y += ship.vy;
-
-            var _child = bulletLayer.children;
-            for (var i = 0; i < _child.length; i++) {
-                if (_child[i].visible == true) {
-                    _child[i].x += _child[i].vx;
-                    _child[i].y += _child[i].vy;
-                }
-            }
+        function playing() {          
 
             if (ship.fire) {
                 _fire.call(ship);
             }
 
-
-            _overlap(playerLayer, bulletLayer, _hitHandle);
+            _overlap(enemyLayer, bulletLayer, _hitHandle);
+            // _overlap(enemyLayer, playerLayer, _playerHitHandle);
 
         }
 
-
         gameAction = playing;
-
-
-
-
 
         //update        
         _update();
 
     }
 
-    function _hitHandle(_player, _bullet) {
+    function _hitHandle(_enemy, _bullet) {
 
-        //_bullet.visible = false;
-       // console.log(Date.now()+"/"+ _bullet.overlapTime);
-        if (Date.now() > _bullet.overlapTime) {
-            console.log("hit");
-             _bullet.overlapTime = Date.now() + 200;
+        if (Date.now() > _enemy.overlapTime) {
+            var _firespark = firesparkLayer.getUnusedSprite();
+            if (typeof(_firespark) != "undefined") {
+                _firespark.x = _enemy.x + Math.floor(Math.random() * 16) * deviation[Math.floor(Math.random() * 2)];
+                _firespark.y = _enemy.y + Math.floor(Math.random() * 16) * deviation[Math.floor(Math.random() * 2)];
+                _firespark.play();
+            }
+            _enemy.beHit();
+            _enemy.life -= _bullet.pow;
+            _enemy.overlapTime = Date.now() + 200;
+
+            if (_enemy.life <= 0) {
+                var _enemyexplode = enemyexplodeLayer.getUnusedSprite();
+                if (typeof(_enemyexplode) != "undefined") {
+                    _enemyexplode.x = _enemy.x;
+                    _enemyexplode.y = _enemy.y;
+                    _enemy.remove();
+                    _enemyexplode.play();
+                }
+            }
         }
+        _bullet.hitTest = false;
+        _bullet.remove();
 
 
-       
+        return;
+
+    }
+
+    function _playerHitHandle(_enemy, _player) {
+        console.log(_player.getBounds());
+        /* if (Date.now() > _player.overlapTime) { 
+           
+         } 
+         _player.overlapTime = Date.now() + 200;*/
     }
 
 
@@ -241,6 +303,30 @@ define(function() {
         spriteAnimeManager['shipCenterToRight'] = _getFrame(_frames, [2, 3, 4]);
         spriteAnimeManager['shipRightToCenter'] = _getFrame(_frames, [4, 3, 2]);
 
+        var _frames = [];
+
+        for (var i = 1; i < 11; i++) {
+            _frames.push(PIXI.Texture.fromFrame("firespark_" + i + ".png"));
+        }
+
+        spriteAnimeManager['firespark'] = _frames;
+
+        var _frames = [];
+
+        for (var i = 1; i < 5; i++) {
+            _frames.push(PIXI.Texture.fromFrame("enemy_" + i + ".png"));
+        }
+
+        spriteAnimeManager['enemy'] = _frames;
+
+        var _frames = [];
+
+        for (var i = 1; i < 17; i++) {
+            _frames.push(PIXI.Texture.fromFrame("explode_typa_a_" + i + ".png"));
+        }
+
+        spriteAnimeManager['explode'] = _frames;
+
     }
 
     /**
@@ -274,16 +360,12 @@ define(function() {
         _layer1 = _layer1.children;
         _layer2 = _layer2.children;
 
-
-
         for (var i = 0; i < _layer1.length; i++) {
-            if (_layer1[i].visible == true) {
-                for (var j = 0; j < _layer2.length; j++) {
-                    if (_layer2[j].visible == true) {
-                        if (hitTest(_layer1[i], _layer2[j])) {
-                            //_handler()
-                            _handler(_layer1[i], _layer2[j]);
-                        }
+            for (var j = 0; j < _layer2.length; j++) {
+
+                if (_layer1[i].visible == true && _layer2[j].visible == true) {
+                    if (hitTest(_layer1[i], _layer2[j])) {
+                        _handler(_layer1[i], _layer2[j]);
                     }
                 }
             }

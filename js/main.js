@@ -23,6 +23,9 @@ var displayWidth;
 var displayHeight;
 
 var playerLayer;
+var enemyLayer;
+var firesparkLayer;
+var enemyexplodeLayer;
 var gameAction = function(){};
 
 var spriteAnimeManager = [];
@@ -47,6 +50,7 @@ requirejs(['pixi_custom', 'create', 'jquery', 'pixi', 'TweenMax', 'EasePack', 'm
 
     function loaded(loader, re) {
         resource = re;
+        
         create.init();
     }
 
