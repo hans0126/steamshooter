@@ -4,6 +4,8 @@ define(function() {
 
     var deviation = [1, -1];
 
+    var enemysOrder = [];
+
     function _init() {
 
         _createMeter(); //create fps test
@@ -22,21 +24,32 @@ define(function() {
 
         playerLayer = new PIXI.Container();
         bulletLayer = new PIXI.Container();
+        smallbulletLayer = new PIXI.Container();
         enemyLayer = new PIXI.Container();
+
         firesparkLayer = new PIXI.Container();
         enemyexplodeLayer = new PIXI.Container();
+        enemybulletLayer = new PIXI.Container();
+        smokeLayer = new PIXI.Container();
 
         bulletLayer.checkOutArea();
         bulletLayer.movement();
+        smallbulletLayer.checkOutArea();
+        smallbulletLayer.movement();
         enemyLayer.checkOutArea();
         enemyLayer.movement();
         playerLayer.movement();
+        enemybulletLayer.checkOutArea();
+        enemybulletLayer.movement();
 
         stage.addChild(playerLayer);
         stage.addChild(bulletLayer);
+        stage.addChild(smallbulletLayer);
         stage.addChild(enemyLayer);
         stage.addChild(firesparkLayer);
         stage.addChild(enemyexplodeLayer);
+        stage.addChild(enemybulletLayer);
+        stage.addChild(smokeLayer);
 
 
         //bullet
@@ -46,8 +59,40 @@ define(function() {
             bullet.id = i;
             bullet.actorInit();
             bulletLayer.addChild(bullet);
+        }
+
+        //small bullet
+        for (var i = 0; i < 50; i++) {
+            var bullet = new PIXI.Sprite.fromFrame('bullet_small.png');
+            bullet.pow = 1;
+            bullet.id = i;
+            bullet.actorInit();
+            smallbulletLayer.addChild(bullet);
+        }
+
+        //enemy bullet
+        for (var i = 0; i < 20; i++) {
+            var enemybullet = new PIXI.Sprite.fromFrame('enemy-bullet.png');
+            enemybullet.pow = 1;
+            enemybullet.id = i;
+            enemybullet.actorInit();
+            enemybulletLayer.addChild(enemybullet);
+        }
+
+        //smoke
+        for (var i = 0; i < 20; i++) {
+            var smoke = new PIXI.extras.MovieClip(spriteAnimeManager['smoke']);
+            smoke.actorInit();
+            smoke.animationSpeed = 0.3;
+            smoke.loop = false;
+            smoke.onComplete = function() {
+                this.visible = false;
+                this.gotoAndStop(0);
+            }
+            smokeLayer.addChild(smoke);
 
         }
+
         //firespark
         for (var i = 0; i < 20; i++) {
             var firespark = new PIXI.extras.MovieClip(spriteAnimeManager['firespark']);
@@ -87,26 +132,82 @@ define(function() {
 
         // deploy enemy
 
-        /*  for (var i = 0; i < 3; i++) {
-              for (var j = 0; j < 10; j++) {
-                  var _e = enemyLayer.getUnusedSprite();
-                  _e.x = _e.width * j + 10 * j;
-                  _e.y = _e.height * i + 10 * i;
-                  _e.play();
+        enemysOrder.push({
+            delayTime: 200,
+            enemyCount: 3,
+            enemy: {
+                x: 40,
+                y: 0,
+                vx: 1,
+                vy: 1,
+                sprite: enemyLayer,
+                delay: 500
+            },
+            attack: {
+                attackDelay: 500,
+                attackCount: 2,
+                bullet: enemybulletLayer
+            }
+        })
 
-              }
-          }*/
 
-        for (var i = 0; i < 5; i++) {
-            setTimeout(function() {
-                var _e = enemyLayer.getUnusedSprite();
-                _e.x = 40;
-                _e.y = 0;
-                _e.vy = 1;
-                 _e.vx = 1;
-                _e.play();
-            }, 500*i);
-        }
+        enemysOrder.push({
+            delayTime: 1600,
+            enemyCount: 3,
+            enemy: {
+                x: 600,
+                y: 0,
+                vx: -1,
+                vy: 1,
+                sprite: enemyLayer,
+                delay: 500
+            },
+            attack: {
+                attackDelay: 500,
+                attackCount: 2,
+                bullet: enemybulletLayer
+            }
+        })
+
+
+        enemysOrder.push({
+            delayTime: 2000,
+            enemyCount: 5,
+            enemy: {
+                x: 40,
+                y: 0,
+                vx: 1,
+                vy: 1,
+                sprite: enemyLayer,
+                delay: 500
+            },
+            attack: {
+                attackDelay: 500,
+                attackCount: 2,
+                bullet: enemybulletLayer
+            }
+        })
+
+         enemysOrder.push({
+            delayTime: 4000,
+            enemyCount: 5,
+            enemy: {
+                x: 40,
+                y: 0,
+                vx: 1,
+                vy: 1,
+                sprite: enemyLayer,
+                delay: 800
+            },
+            attack: {
+                attackDelay: 500,
+                attackCount: 1,
+                bullet: enemybulletLayer
+            }
+        })
+
+
+        _enemySchedule(enemysOrder);
 
 
 
@@ -114,13 +215,33 @@ define(function() {
         var ship = new PIXI.extras.MovieClip(spriteAnimeManager['ship']);
         ship.loop = false;
         ship.fire = false;
+        ship.life = 2;
         ship.actorInit();
-        ship.state;
         ship.x = renderer.width / 2;
         ship.y = renderer.height / 2;
         ship.firingTimer = 0;
         ship.animationSpeed = 0.2;
         ship.visible = true;
+        ship.shipType = "mothership";
+        ship.speed = 3;
+        ship.bullet = bulletLayer;
+
+        currentControl = ship;
+
+        playerLayer.addChild(ship);
+
+        for (var i = 0; i < 2; i++) {
+            var ship = new PIXI.Sprite.fromFrame('small_player.png');
+            ship.fire = false;
+            ship.actorInit();
+            ship.firingTimer = 0;
+            ship.visible = false;
+            ship.shipType = "ship";
+            ship.speed = 5;
+            ship.life = 1;
+            ship.bullet = smallbulletLayer;
+            playerLayer.addChild(ship);
+        }
 
         var left = keyboard(37),
             up = keyboard(38),
@@ -130,52 +251,70 @@ define(function() {
 
 
         left.press = function() {
-            ship.setTextures = spriteAnimeManager['shipCenterToLeft'];
-            ship.vx = -2;
+
+            switch (currentControl.shipType) {
+                case "mothership":
+                    currentControl.setTextures = spriteAnimeManager['shipCenterToLeft'];
+                    break;
+            }
+
+            currentControl.vx = currentControl.speed * -1;
         }
 
         left.release = function() {
-            ship.setTextures = spriteAnimeManager['shipLeftToCenter'];
-            ship.vx = 0;
+            switch (currentControl.shipType) {
+                case "mothership":
+                    currentControl.setTextures = spriteAnimeManager['shipLeftToCenter'];
+                    break;
+            }
+            currentControl.vx = 0;
         }
 
         right.press = function() {
-            ship.setTextures = spriteAnimeManager['shipCenterToRight'];
-            ship.vx = 2;
+
+            switch (currentControl.shipType) {
+                case "mothership":
+                    currentControl.setTextures = spriteAnimeManager['shipCenterToRight'];
+                    break;
+            }
+
+            currentControl.vx = currentControl.speed;
         }
 
         right.release = function() {
-            ship.setTextures = spriteAnimeManager['shipRightToCenter'];
-            ship.vx = 0;
+            switch (currentControl.shipType) {
+                case "mothership":
+                    currentControl.setTextures = spriteAnimeManager['shipRightToCenter'];
+                    break;
+            }
+
+            currentControl.vx = 0;
         }
 
         up.press = function() {
-            ship.vy = -2;
+            currentControl.vy = currentControl.speed * -1;
         }
 
         up.release = function() {
-            ship.vy = 0;
+            currentControl.vy = 0;
         }
 
         down.press = function() {
-            ship.vy = 2;
+            currentControl.vy = currentControl.speed;
         }
 
         down.release = function() {
-            ship.vy = 0;
+            currentControl.vy = 0;
         }
 
 
         fire.press = function() {
-            ship.fire = true;
+            currentControl.fire = true;
         }
 
         fire.release = function() {
-
-            ship.fire = false;
+            currentControl.fire = false;
         }
-
-        playerLayer.addChild(ship);
 
         stage.interactive = true;
 
@@ -186,33 +325,33 @@ define(function() {
 
         }
 
-
         function _fire() {
 
-            if (Date.now() > ship.firingTimer) {
+            if (Date.now() > this.firingTimer) {
 
-                var _b = bulletLayer.getUnusedSprite();
+                var _b = this.bullet.getUnusedSprite();
 
                 if (typeof(_b) != "undefined") {
 
                     _b.x = this.x + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)];
                     _b.y = this.y + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)] - 40;
 
-                    _b.velocity(ship.x, 0, 7, false);
+                    _b.velocity(this.x, 0, 7, false);
 
-                    ship.firingTimer = Date.now() + 120;
+                    this.firingTimer = Date.now() + 120;
                 }
             }
         }
 
-        function playing() {          
+        function playing() {
 
-            if (ship.fire) {
-                _fire.call(ship);
+            if (currentControl.fire) {
+                _fire.call(currentControl);
             }
 
             _overlap(enemyLayer, bulletLayer, _hitHandle);
-            // _overlap(enemyLayer, playerLayer, _playerHitHandle);
+            _overlap(enemyLayer, smallbulletLayer, _hitHandle);
+            _overlap(enemybulletLayer, playerLayer, _playerHitHandle);
 
         }
 
@@ -226,12 +365,7 @@ define(function() {
     function _hitHandle(_enemy, _bullet) {
 
         if (Date.now() > _enemy.overlapTime) {
-            var _firespark = firesparkLayer.getUnusedSprite();
-            if (typeof(_firespark) != "undefined") {
-                _firespark.x = _enemy.x + Math.floor(Math.random() * 16) * deviation[Math.floor(Math.random() * 2)];
-                _firespark.y = _enemy.y + Math.floor(Math.random() * 16) * deviation[Math.floor(Math.random() * 2)];
-                _firespark.play();
-            }
+            _enemy.damageEffect(firesparkLayer);
             _enemy.beHit();
             _enemy.life -= _bullet.pow;
             _enemy.overlapTime = Date.now() + 200;
@@ -246,7 +380,7 @@ define(function() {
                 }
             }
         }
-        _bullet.hitTest = false;
+
         _bullet.remove();
 
 
@@ -254,12 +388,35 @@ define(function() {
 
     }
 
-    function _playerHitHandle(_enemy, _player) {
-        console.log(_player.getBounds());
-        /* if (Date.now() > _player.overlapTime) { 
-           
-         } 
-         _player.overlapTime = Date.now() + 200;*/
+    function _playerHitHandle(_bullet, _player) {
+
+        if (Date.now() > _player.overlapTime) {
+            _player.beHit();
+            _player.life -= _bullet.pow;
+            _player.damageEffect(firesparkLayer);
+            if (_player.life <= 0) {
+
+                switch (_player.shipType) {
+                    case "mothership":
+                        currentControl = playerLayer.children[1];
+                        currentControl.visible = true;
+                        currentControl.x = _player.x;
+                        currentControl.y = _player.y;
+                        currentControl.overlapTime = Date.now() + 1000;
+                        _player.visible = false;
+                        break;
+
+                    default:
+                        _player.visible = false;
+
+                }
+
+            }
+
+            _player.overlapTime = Date.now() + 200;
+        }
+
+        _bullet.remove();
     }
 
 
@@ -374,6 +531,37 @@ define(function() {
     }
 
 
+    /**
+     *
+     */
+
+    function _enemySchedule(_order) {
+
+        for (var i = 0; i < _order.length; i++) {
+
+            setTimeout(function() {
+
+                for (var j = 0; j < this.enemyCount; j++) {
+
+                    setTimeout(function() {
+                        var _e = this.enemy.sprite.getUnusedSprite();
+                        if (typeof(_e) != "undefined") {
+                            _e.enemyAttackMode(this.attack.attackDelay, this.attack.attackCount, this.attack.bullet);
+                            _e.x = this.enemy.x;
+                            _e.y = this.enemy.y;
+                            _e.vy = this.enemy.vy;
+                            _e.vx = this.enemy.vx;
+                            _e.play();
+                        }
+                    }.bind(this), this.enemy.delay * j);
+
+                }
+
+
+            }.bind(_order[i]), _order[i].delayTime);
+        }
+
+    }
 
     return {
         init: _init

@@ -22,10 +22,17 @@ var renderer;
 var displayWidth;
 var displayHeight;
 
+var currentControl;
+
 var playerLayer;
+var bulletLayer;
+var smallbulletLayer;
+var smokeLayer;
 var enemyLayer;
 var firesparkLayer;
 var enemyexplodeLayer;
+var enemybulletLayer;
+
 var gameAction = function(){};
 
 var spriteAnimeManager = [];

@@ -141,8 +141,6 @@ define(function() {
             this.overlapTime = 0;
             this.visible = false;
             this.setAnchor(0.5);
-
-
         }
 
         PIXI.Container.prototype.remove = function() {
@@ -151,8 +149,62 @@ define(function() {
             this.x = 0;
             this.y = 0;
             this.visible = false;
+        }
+
+        /**
+        * enemy attack mode
+        * @param {number} enemy fire delay time
+        * @param {number} enemy attack count
+        * @param {object} bullet layer
+        */
+
+
+        PIXI.Container.prototype.enemyAttackMode = function(_attackDelayTime, _attackCount, _bulletLayer) {
+
+            this.attack = true;
+            this.currentTime = Date.now() + _attackDelayTime;
+            this.attackDelayTime = _attackDelayTime;
+            this.attackCount = _attackCount;
+
+            function _process() {
+                if (this.attack) {
+                    if (Date.now() > this.currentTime) {
+
+                        var _b = _bulletLayer.getUnusedSprite();
+                        var _t = playerLayer.children[0];
+
+                        if (typeof(_b) != "undefined" && typeof(_t) != "undefined") {
+                            _b.x = this.x;
+                            _b.y = this.y;
+                            _b.velocity(_t.x, _t.y, 3, false);
+                        }
+
+                        this.currentTime = Date.now() + this.attackDelayTime;
+
+                        this.attackCount--;
+                        if (this.attackCount <= 0) {
+                            this.attack = false;
+                        }
+                    }
+                }
+            }
+
+            PIXI.ticker.shared.add(_process.bind(this));
+        }
+
+        PIXI.Container.prototype.damageEffect = function(_effectLayer) {
+
+            var _e = _effectLayer.getUnusedSprite();
+            var _deviation = [1, -1];
+
+            if (typeof(_e) != "undefined") {
+                _e.x = this.x + Math.floor(Math.random() * this.width / 2) * _deviation[Math.floor(Math.random() * 2)];
+                _e.y = this.y + Math.floor(Math.random() * this.height / 2) * _deviation[Math.floor(Math.random() * 2)];
+                _e.play();
+            }
 
         }
+
 
 
 
