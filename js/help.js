@@ -62,28 +62,47 @@ function degree2Radian(_degrees) {
 
 
 /**
+ * hittest for anchor 0.5 (center,center)
+ * @param {object} 
+ * @param {object} 
  */
 
-function hitTest(r1, r2) {
-    /*
-    console.log("x:%s,y:%s,width:%s,height:%s",r1.x,r1.y,r1.width,r1.height);
-    r1 = r1.getBounds();  
-    console.log("x:%s,y:%s,width:%s,height:%s",r1.x,r1.y,r1.width,r1.height);
-console.log("---");
-    console.log("x:%s,y:%s,width:%s,height:%s",r2.x,r2.y,r2.width,r2.height);
-      r2 = r2.getBounds();
-       console.log("x:%s,y:%s,width:%s,height:%s",r2.x,r2.y,r2.width,r2.height);
-    console.log("***");*/
+function hitTest(_object1, _object2) {
+
+    var r1 = _getInfo(_object1);
+    var r2 = _getInfo(_object2);
 
 
 
-    if (r1.x - (r1.width / 2) + r1.width > r2.x - (r2.width / 2) &&
-        r1.y - (r1.height / 2) + r1.height > r2.y - (r2.height / 2) &&
-        r1.x - (r1.width / 2) < r2.x - (r2.width / 2) + r2.width &&
-        r1.y - (r1.height / 2) < r2.y - (r2.height / 2) + r2.height) {
+    if (r1.x + (r1.width / 2) > r2.x - (r2.width / 2) &&
+        r1.y + (r1.height / 2) > r2.y - (r2.height / 2) &&
+        r1.x - (r1.width / 2) < r2.x + (r2.width / 2) &&
+        r1.y - (r1.height / 2) < r2.y + (r2.height / 2)) {
         return true;
     } else {
         return false;
     }
 
+    function _getInfo(_obj) {
+        var _o = {};
+        _o.x = _obj.x;
+        _o.y = _obj.y;
+
+        if (typeof(_obj.hitarea) != "undefined") {
+            _o.width = _obj.hitarea.width;
+            _o.height = _obj.hitarea.height;
+        } else {
+            _o.width = _obj.width;
+            _o.height = _obj.height;
+        }
+
+        return _o;
+
+    }
+}
+
+
+function getDeviation(){
+    var _d = [1,-1];
+    return _d[Math.floor(Math.random()*2)];
 }

@@ -57,6 +57,7 @@ define(function() {
             for (var i = 0; i < _child.length; i++) {
                 if (_child[i].visible == false) {
                     _child[i].visible = true;
+                    _child[i].willHit = true;
                     return _child[i];
                     break;
                 }
@@ -96,6 +97,17 @@ define(function() {
             }
 
             PIXI.ticker.shared.add(_t.bind(this));
+        }
+
+
+        PIXI.DisplayObject.prototype.hit = function() {
+
+            var _child = this.children;
+            for (var i = 0; i < _child.length; i++) {
+                _child[i].willHit = false;
+            }
+
+
         }
 
         //set child property
@@ -152,14 +164,14 @@ define(function() {
         }
 
         /**
-        * enemy attack mode
-        * @param {number} enemy fire delay time
-        * @param {number} enemy attack count
-        * @param {object} bullet layer
-        */
+         * enemy attack mode
+         * @param {number} enemy fire delay time
+         * @param {number} enemy attack count
+         * @param {object} bullet layer
+         */
 
 
-        PIXI.Container.prototype.enemyAttackMode = function(_attackDelayTime, _attackCount, _bulletLayer) {
+        PIXI.Container.prototype.enemyAttackMode = function(_attackDelayTime, _attackCount, _bulletGroup) {
 
             this.attack = true;
             this.currentTime = Date.now() + _attackDelayTime;
@@ -170,8 +182,8 @@ define(function() {
                 if (this.attack) {
                     if (Date.now() > this.currentTime) {
 
-                        var _b = _bulletLayer.getUnusedSprite();
-                        var _t = playerLayer.children[0];
+                        var _b = _bulletGroup.getUnusedSprite();
+                        var _t = playerGroup.children[0];
 
                         if (typeof(_b) != "undefined" && typeof(_t) != "undefined") {
                             _b.x = this.x;
@@ -192,9 +204,9 @@ define(function() {
             PIXI.ticker.shared.add(_process.bind(this));
         }
 
-        PIXI.Container.prototype.damageEffect = function(_effectLayer) {
+        PIXI.Container.prototype.damageEffect = function(_effectGroup) {
 
-            var _e = _effectLayer.getUnusedSprite();
+            var _e = _effectGroup.getUnusedSprite();
             var _deviation = [1, -1];
 
             if (typeof(_e) != "undefined") {

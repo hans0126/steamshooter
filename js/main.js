@@ -10,7 +10,11 @@ requirejs.config({
         meter: "lib/stats.js-master/build/stats.min",
         pixi_custom: "pixi_custom",
         help: "help",
-        create: "app/create"
+        create: "app/create",
+        spriteAnimeManager: "app/sprite_anime_manager",
+        hitHandle : "app/hit_handle",
+        actor : "app/actor",
+        control:"app/control"
     }
 })
 
@@ -24,18 +28,20 @@ var displayHeight;
 
 var currentControl;
 
-var playerLayer;
-var bulletLayer;
-var smallbulletLayer;
-var smokeLayer;
-var enemyLayer;
-var firesparkLayer;
-var enemyexplodeLayer;
-var enemybulletLayer;
+var playerGroup;
+var bulletGroup;
+var smallbulletGroup;
+var smokeGroup;
+var enemyGroup;
+var firesparkGroup;
+var enemyexplodeGroup;
+var enemybulletGroup;
+
+ var deviation = [1, -1];
 
 var gameAction = function(){};
 
-var spriteAnimeManager = [];
+var spriteAnimeStorage = [];
 
 
 requirejs(['pixi_custom', 'create', 'jquery', 'pixi', 'TweenMax', 'EasePack', 'meter', 'help'], function(pixi_custom, create) {
@@ -44,12 +50,7 @@ requirejs(['pixi_custom', 'create', 'jquery', 'pixi', 'TweenMax', 'EasePack', 'm
 
     loader = new PIXI.loaders.Loader();
     loader.add("ship", "source/ship.json");
-    /*loader.add("ui", "images/ui.json");
-    loader.add("role", "images/role.json");
-    loader.add("blade", "images/effect_blade.json");
-    loader.add("police_bg", "images/police_bg.jpg");
-    loader.add("crackhouse", "images/crackhouse.fnt");*/
-
+   
     loader.on("complete", loaded);
     loader.load();
 
