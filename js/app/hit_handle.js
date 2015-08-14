@@ -36,16 +36,10 @@ define(function() {
             _enemy.damageEffect(firesparkGroup);
             _enemy.beHit();
             _enemy.life -= _bullet.pow;
-            _enemy.overlapTime = Date.now() + 200;
+            _enemy.overlapTime = Date.now() + _enemy.overlapDelayTime;
 
             if (_enemy.life <= 0) {
-                var _enemyexplode = enemyexplodeGroup.getUnusedSprite();
-                if (typeof(_enemyexplode) != "undefined") {
-                    _enemyexplode.x = _enemy.x;
-                    _enemyexplode.y = _enemy.y;
-                    _enemy.remove();
-                    _enemyexplode.play();
-                }
+                _enemy.destoryEffect();
             }
         }
 
@@ -59,6 +53,7 @@ define(function() {
             _player.beHit();
             _player.life -= _bullet.pow;
             _player.damageEffect(firesparkGroup);
+
             if (_player.life <= 0) {
 
                 switch (_player.shipType) {
@@ -67,32 +62,83 @@ define(function() {
                         currentControl = playerGroup.children[1];
                         currentControl.visible = true;
                         currentControl.x = _player.x;
-                        currentControl.y = _player.y;                      
+                        currentControl.y = _player.y;
                         currentControl.overlapTime = Date.now() + 1000;
 
                         _player.destoryEffect();
-                        _player.overlapTime = Date.now() + 10000;                      
                         _player.willHit = false;
 
                         break;
 
                     default:
-                        _player.visible = false;
+                       _player.destoryEffect();
 
                 }
 
             }
 
-            _player.overlapTime = Date.now() + 200;
+            _player.overlapTime = Date.now() + _player.overlapDelayTime;
         }
 
         _bullet.remove();
     }
 
+    function _playerEnemyHitHandle(_enemy, _player) {
+
+        if (Date.now() > _player.overlapTime && Date.now() > _enemy.overlapTime) {
+            _player.beHit();
+            _player.life -= 1;
+            _player.damageEffect(firesparkGroup);
+            _player.overlapTime = Date.now() + _player.overlapDelayTime;
+
+            _enemy.beHit();
+            _enemy.damageEffect(firesparkGroup);
+            _enemy.life -= 1;
+            _enemy.overlapTime = Date.now() + _enemy.overlapDelayTime;
+
+
+            if (_player.life <= 0) {
+
+                switch (_player.shipType) {
+                    case "mothership":
+
+                        currentControl = playerGroup.children[1];
+                        currentControl.visible = true;
+                        currentControl.x = _player.x;
+                        currentControl.y = _player.y;
+                        currentControl.overlapTime = Date.now() + 1000;
+
+                        _player.destoryEffect();
+                        _player.willHit = false;
+
+                        break;
+
+                    default:
+                        _player.destoryEffect();
+
+                }
+
+            }
+
+            if (_enemy.life <= 0) {
+                _enemy.destoryEffect();
+            }
+
+
+        }
+
+
+    }
+
+
+
+
+
     return {
-    	overlap:_overlap,
-    	enemyHitHandle:_enemyHitHandle,
-    	playerHitHandle:_playerHitHandle
+        overlap: _overlap,
+        enemyHitHandle: _enemyHitHandle,
+        playerHitHandle: _playerHitHandle,
+        playerEnemyHitHandle: _playerEnemyHitHandle
     }
 
 });

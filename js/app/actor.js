@@ -18,6 +18,7 @@ define(function() {
             bullet.pow = 2;
             bullet.id = i;
             bullet.actorInit();
+            bullet.rotation = degree2Radian(90);
             bulletGroup.addChild(bullet);
         }
 
@@ -37,6 +38,7 @@ define(function() {
             enemybullet.id = i;
             enemybullet.actorInit();
             enemybulletGroup.addChild(enemybullet);
+
         }
 
         //create smoke
@@ -87,8 +89,11 @@ define(function() {
             enemy.animationSpeed = 0.2;
             enemy.life = 3;
             enemy.id = i;
+            enemy.destoryEffect = _explodeEffect;
+            enemy.overlapDelayTime = 40;
             enemyGroup.addChild(enemy);
         }
+
         //create player
         var ship = new PIXI.extras.MovieClip(spriteAnimeStorage['ship']);
         ship.loop = false;
@@ -102,42 +107,17 @@ define(function() {
         ship.visible = true;
         ship.shipType = "mothership";
         ship.speed = 3;
+        ship.bulletFiringTime = 120;
+        ship.overlapDelayTime = 200;
         ship.hitarea = {
             width: 20,
             height: 20
         }
         ship.bullet = bulletGroup;
 
-        ship.destoryEffect = function() {
+        motherShipCreateFort.call(ship);
 
-            for (var i = 0; i < 20; i++) {
-                setTimeout(function() {
-                    var _e = enemyexplodeGroup.getUnusedSprite();
-                    if (typeof(_e) != "undefined") {
-                        _e.x = this.x + Math.floor(Math.random() * (this.width / 2)) * getDeviation();
-                        _e.y = this.y + Math.floor(Math.random() * (this.height / 2)) * getDeviation();
-                        _e.play();
-                    }
-
-                }.bind(this), 250 * i);
-            }
-
-            var _iter = setInterval(function() {
-                this.vy = -1;
-                this.vx = 0;
-                this.alpha -= 0.1;
-             	this.scale.x -= 0.01;
-             	this.scale.y -= 0.01;
-              
-                if (this.alpha <= 0) {
-                    this.remove();
-                    this.alpha = 0;
-                    clearInterval(_iter);
-                }
-
-            }.bind(this), 500);
-
-        }
+        ship.destoryEffect = _mothershipExplodeEffect;
 
         currentControl = ship;
 
@@ -153,10 +133,11 @@ define(function() {
             ship.speed = 5;
             ship.life = 1;
             ship.bullet = smallbulletGroup;
+            ship.destoryEffect = _explodeEffect;
+            ship.overlapDelayTime = 200;
+            ship.bulletFiringTime = 120;
             playerGroup.addChild(ship);
         }
-
-
 
 
         bulletGroup.checkOutArea();
@@ -190,8 +171,6 @@ define(function() {
         stage.addChild(enemyexplodeGroup);
         stage.addChild(enemybulletGroup);
         stage.addChild(smokeGroup);
-
-
     }
 
     //set actor appearance
@@ -326,19 +305,133 @@ define(function() {
 
         if (Date.now() > this.firingTimer) {
 
-            var _b = this.bullet.getUnusedSprite();
+            switch (this.shipType) {
+                case "mothership":
 
-            if (typeof(_b) != "undefined") {
+                    for (var i = 0; i < this.children.length; i++) {
+                        var _child = this.children[i];
+                        var _b = this.bullet.getUnusedSprite();
 
-                _b.x = this.x + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)];
-                _b.y = this.y + Math.floor(Math.random() * 10) * deviation[Math.floor(Math.random() * 2)] - 40;
+                        if (typeof(_b) != "undefined") {
 
-                _b.velocity(this.x, 0, 7, false);
+                            var _d = [1, -1];
+                            var _t = _d[i] * 40;
+                            /* _b.x = this.x + _t + Math.floor(Math.random() * 10) * getDeviation();
+                             _b.y = this.y + Math.floor(Math.random() * 10) * getDeviation() - 40;*/
+                            _b.x = this.x + _child.x;
+                            _b.y = this.y + _child.y;
+                            var dgre = degree2Radian(_child.angle) + degree2Radian(Math.random() * (_child.de / 2)) * getDeviation();
 
-                this.firingTimer = Date.now() + 120;
+                            var _xx = _b.x + Math.sin(dgre) * _child.te;
+                            var _yy = _b.y + Math.cos(dgre) * _child.te * -1;
+
+                            _b.velocity(_xx, _yy, 7, true);
+                        }
+
+                    }
+
+                    break;
+
+                default:
+
+                    var _b = this.bullet.getUnusedSprite();
+
+                    if (typeof(_b) != "undefined") {
+
+                        _b.x = this.x + Math.floor(Math.random() * 10) * getDeviation();
+                        _b.y = this.y + Math.floor(Math.random() * 10) * getDeviation() - 40;
+
+                        _b.velocity(this.x, 0, 7, false);
+                    }
+
             }
+
+            this.firingTimer = Date.now() + this.bulletFiringTime;
         }
     }
+
+    /**
+     */
+
+    function _explodeEffect() {
+
+        var _e = enemyexplodeGroup.getUnusedSprite();
+        if (typeof(_e) != "undefined") {
+            _e.x = this.x;
+            _e.y = this.y;
+            _e.play();
+            this.remove();
+        }
+
+    }
+
+
+    function _mothershipExplodeEffect() {
+
+        for (var i = 0; i < 20; i++) {
+            setTimeout(function() {
+                var _e = enemyexplodeGroup.getUnusedSprite();
+                if (typeof(_e) != "undefined") {
+                    _e.x = this.x + Math.floor(Math.random() * (this.width / 2)) * getDeviation();
+                    _e.y = this.y + Math.floor(Math.random() * (this.height / 2)) * getDeviation();
+                    _e.play();
+                }
+
+            }.bind(this), 250 * i);
+        }
+
+        var _iter = setInterval(function() {
+            this.vy = -1;
+            this.vx = 0;
+            this.alpha -= 0.1;
+            this.scale.x -= 0.01;
+            this.scale.y -= 0.01;
+
+            if (this.alpha <= 0) {
+                this.remove();
+                this.alpha = 0;
+                clearInterval(_iter);
+            }
+
+        }.bind(this), 500);
+
+    }
+
+
+    function motherShipCreateFort() {
+        _d = [1, -1];
+        for (var i = 0; i < 2; i++) {
+            _g = new PIXI.Graphics();
+            _g.x = (this.width / 2 * _d[i]);
+            _g.y = _g.y - 20;
+            _g.angle = 0;
+            _g.av = 0;
+            _g.de = 10;
+            _g.te = 270;
+            this.addChild(_g);
+        }
+
+        PIXI.ticker.shared.add(_ud.bind(this));
+
+        function _ud() {
+            var _c = this.children;
+
+            for (var i = 0; i < _c.length; i++) {
+                _c[i].angle += _c[i].av;
+                _c[i].beginFill(0xa000f3, 0.2);
+                _c[i].arc(0, 0, _c[i].te, 0, degree2Radian(_c[i].de) * -1, 1);
+                _c[i].rotation = degree2Radian(_c[i].angle) + degree2Radian(Math.abs(90 - (_c[i].de / 2))) * -1;
+            }
+        }
+
+
+
+
+
+
+    }
+
+
 
     return {
         create: _create,

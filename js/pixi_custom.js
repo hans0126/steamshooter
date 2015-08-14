@@ -104,7 +104,7 @@ define(function() {
 
             var _child = this.children;
             for (var i = 0; i < _child.length; i++) {
-                _child[i].willHit = false;
+                _child[i].willHit = true;
             }
 
 

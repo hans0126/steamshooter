@@ -25,7 +25,7 @@ define(["spriteAnimeManager", "hitHandle", "actor", "control"], function(spriteA
         actor.create();
         
         // start game
-        actor.startSchedule();
+        //actor.startSchedule();
 
         // game control
         control.start();
@@ -40,7 +40,7 @@ define(["spriteAnimeManager", "hitHandle", "actor", "control"], function(spriteA
             hitHandle.overlap(enemyGroup, bulletGroup, hitHandle.enemyHitHandle);
             hitHandle.overlap(enemyGroup, smallbulletGroup, hitHandle.enemyHitHandle);
             hitHandle.overlap(enemybulletGroup, playerGroup, hitHandle.playerHitHandle);
-
+            hitHandle.overlap(enemyGroup, playerGroup, hitHandle.playerEnemyHitHandle);
         }
 
         gameAction = playing;
