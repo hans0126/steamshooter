@@ -37,6 +37,10 @@ var firesparkGroup;
 var enemyexplodeGroup;
 var enemybulletGroup;
 
+
+var uiLayer;
+
+
  var deviation = [1, -1];
 
 var gameAction = function(){};

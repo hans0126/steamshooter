@@ -46,6 +46,14 @@ define(function() {
 
         spriteAnimeStorage['explode'] = _frames;
 
+        var _frames = [];
+
+        for (var i = 0; i < 11; i++) {
+            _frames.push(PIXI.Texture.fromFrame("gatling_" + i + ".png"));
+        }
+
+        spriteAnimeStorage['gatling_icon'] = _frames;
+
     }
 
     /**
@@ -65,7 +73,7 @@ define(function() {
     }
 
 
-    return{
-    	create:_createSpriteAnime
+    return {
+        create: _createSpriteAnime
     }
 })

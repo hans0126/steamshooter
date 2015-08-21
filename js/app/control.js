@@ -9,8 +9,10 @@ define(function() {
             fire = keyboard(32),
             slowDown = keyboard(65), //A
             speedUp = keyboard(83), //S
-            fort1AngleReduce = keyboard(81), //Q
-            fort1AnglePlus = keyboard(87); //W
+            fort2AngleReduce = keyboard(81), //Q 
+            fort2AnglePlus = keyboard(87), //W
+            fort1AngleReduce = keyboard(69), //E
+            fort1AnglePlus = keyboard(82); //R
 
 
         left.press = function() {
@@ -127,6 +129,32 @@ define(function() {
         fort1AnglePlus.release = function() {
             if (currentControl.shipType == "mothership") {
                 currentControl.children[0].av = 0;
+            }
+        }
+
+        fort2AngleReduce.press = function() {
+            if (currentControl.shipType == "mothership") {
+                currentControl.children[1].av = -1;
+            }
+
+        }
+
+        fort2AngleReduce.release = function() {
+            if (currentControl.shipType == "mothership") {
+                currentControl.children[1].av = 0;
+            }
+        }
+
+        fort2AnglePlus.press = function() {
+            console.log("A");
+            if (currentControl.shipType == "mothership") {
+                currentControl.children[1].av = 1;
+            }
+        }
+
+        fort2AnglePlus.release = function() {
+            if (currentControl.shipType == "mothership") {
+                currentControl.children[1].av = 0;
             }
         }
 

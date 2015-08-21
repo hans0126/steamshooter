@@ -12,6 +12,12 @@ define(function() {
         smokeGroup = new PIXI.Container();
 
 
+        uiLayer = new PIXI.Container();
+
+
+
+
+
         //create bullet
         for (var i = 0; i < 50; i++) {
             var bullet = new PIXI.Sprite.fromFrame('bullet_big.png');
@@ -94,7 +100,7 @@ define(function() {
             enemyGroup.addChild(enemy);
         }
 
-        //create player
+        //create player mothership
         var ship = new PIXI.extras.MovieClip(spriteAnimeStorage['ship']);
         ship.loop = false;
         ship.fire = false;
@@ -106,6 +112,8 @@ define(function() {
         ship.animationSpeed = 0.2;
         ship.visible = true;
         ship.shipType = "mothership";
+        ship.overheat = 0;
+        ship.penaltyCount = 0;
         ship.speed = 3;
         ship.bulletFiringTime = 120;
         ship.overlapDelayTime = 200;
@@ -115,6 +123,32 @@ define(function() {
         }
         ship.bullet = bulletGroup;
 
+        ship.cooling = setInterval(function() {
+
+            if (this.penaltyCount < 1) {
+                if (!this.fire) {
+                    if (this.overheat > 0) {
+                        this.overheat--;
+                    }
+                }
+            } else {
+                this.penaltyCount--;
+                if (this.penaltyCount < 1) {
+                    this.overheat = 0;
+                    console.log("penalty over");
+                }
+            }
+
+           
+
+            for(var i=0;i<this.children.length;i++){
+
+                this.children[i].overheatDisplay.gotoAndStop(Math.floor(this.overheat/10)); 
+
+            }
+
+        }.bind(ship), 100);
+
         motherShipCreateFort.call(ship);
 
         ship.destoryEffect = _mothershipExplodeEffect;
@@ -122,7 +156,7 @@ define(function() {
         currentControl = ship;
 
         playerGroup.addChild(ship);
-
+        //small ship
         for (var i = 0; i < 2; i++) {
             var ship = new PIXI.Sprite.fromFrame('small_player.png');
             ship.fire = false;
@@ -171,6 +205,7 @@ define(function() {
         stage.addChild(enemyexplodeGroup);
         stage.addChild(enemybulletGroup);
         stage.addChild(smokeGroup);
+        stage.addChild(uiLayer);
     }
 
     //set actor appearance
@@ -307,27 +342,38 @@ define(function() {
 
             switch (this.shipType) {
                 case "mothership":
+                    if (this.overheat < 100) {
+                        for (var i = 0; i < this.children.length; i++) {
+                            var _child = this.children[i];
+                            var _b = this.bullet.getUnusedSprite();
 
-                    for (var i = 0; i < this.children.length; i++) {
-                        var _child = this.children[i];
-                        var _b = this.bullet.getUnusedSprite();
+                            if (typeof(_b) != "undefined") {
 
-                        if (typeof(_b) != "undefined") {
+                                var _d = [1, -1];
+                                var _t = _d[i] * 40;
+                                /* _b.x = this.x + _t + Math.floor(Math.random() * 10) * getDeviation();
+                                 _b.y = this.y + Math.floor(Math.random() * 10) * getDeviation() - 40;*/
+                                _b.x = this.x + _child.x;
+                                _b.y = this.y + _child.y;
+                                var dgre = degree2Radian(_child.angle) + degree2Radian(Math.random() * (_child.de / 2)) * getDeviation();
 
-                            var _d = [1, -1];
-                            var _t = _d[i] * 40;
-                            /* _b.x = this.x + _t + Math.floor(Math.random() * 10) * getDeviation();
-                             _b.y = this.y + Math.floor(Math.random() * 10) * getDeviation() - 40;*/
-                            _b.x = this.x + _child.x;
-                            _b.y = this.y + _child.y;
-                            var dgre = degree2Radian(_child.angle) + degree2Radian(Math.random() * (_child.de / 2)) * getDeviation();
+                                var _xx = _b.x + Math.sin(dgre) * _child.te;
+                                var _yy = _b.y + Math.cos(dgre) * _child.te * -1;
 
-                            var _xx = _b.x + Math.sin(dgre) * _child.te;
-                            var _yy = _b.y + Math.cos(dgre) * _child.te * -1;
+                                _b.velocity(_xx, _yy, 7, true);
+                            }
 
-                            _b.velocity(_xx, _yy, 7, true);
+                           _child.overheatDisplay.gotoAndStop(Math.floor(this.overheat/10)); 
+
                         }
 
+                        this.overheat+=1;
+                    } else {
+                        if (this.penaltyCount == 0) {
+
+                            this.penaltyCount = 100;
+                            console.log("overheat");
+                        }
                     }
 
                     break;
@@ -401,7 +447,7 @@ define(function() {
     function motherShipCreateFort() {
         _d = [1, -1];
         for (var i = 0; i < 2; i++) {
-            _g = new PIXI.Graphics();
+            var _g = new PIXI.Graphics();
             _g.x = (this.width / 2 * _d[i]);
             _g.y = _g.y - 20;
             _g.angle = 0;
@@ -409,6 +455,26 @@ define(function() {
             _g.de = 10;
             _g.te = 270;
             this.addChild(_g);
+
+            // icon
+
+            var _gun = new PIXI.extras.MovieClip(spriteAnimeStorage['gatling_icon']);
+
+            uiLayer.addChild(_gun);
+           
+            _gun.y =renderer.height - _gun.height-5;          
+
+            if (_d[i] > 0) {
+                _gun.x = renderer.width - _gun.width -5;
+            } else {
+                _gun.x = 5;
+            }
+
+            _g.overheatDisplay = _gun;          
+
+
+
+
         }
 
         PIXI.ticker.shared.add(_ud.bind(this));
