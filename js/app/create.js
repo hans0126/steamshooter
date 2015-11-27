@@ -25,7 +25,7 @@ define(["spriteAnimeManager", "hitHandle", "actor", "control"], function(spriteA
         actor.create();
         
         // start game
-        //actor.startSchedule();
+        actor.startSchedule();
 
         // game control
         control.start();
